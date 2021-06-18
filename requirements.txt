@@ -1,0 +1,13 @@
+bidict==0.21.2
+certifi==2021.5.30
+chardet==4.0.0
+controller==0.1.0
+idna==2.10
+psycopg2==2.8.6
+pyotp==2.6.0
+PySocks==1.7.1
+python-engineio==4.2.0
+python-socketio==5.3.0
+requests==2.25.1
+stem==1.8.0
+urllib3==1.26.5
