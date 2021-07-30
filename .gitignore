@@ -6,3 +6,5 @@ ENV/
 env.bak/
 venv.bak/
 bitskins.py
+__pycahce__
+.idea
