@@ -10,7 +10,7 @@ steam_names = []
 list_to_insert = []
 
 
-def start():
+def adding_to_db():
     cur.execute(
         "SELECT name, steamlink, steamid, price FROM steaminfo ")  # WHERE price::decimal > 0.1 AND NAME NOT LIKE '★%'
     rows = cur.fetchall()

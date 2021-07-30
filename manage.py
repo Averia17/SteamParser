@@ -1,6 +1,12 @@
+import asyncio
 import socket
 import time
 from concurrent.futures.thread import ThreadPoolExecutor
+from xml.etree.ElementTree import fromstring
+
+from toripchanger import TorIpChanger
+import requests
+
 
 import requests
 import socks
@@ -26,6 +32,8 @@ bitskinsToSteamAutobuyItems = []
 steamItems = []
 
 
+
+
 def fetch(session, row):
     with session.get(ITEMORDERSHESTOGRAM_LINK.format(nameid=row[2])) as response:
         try:
@@ -35,23 +43,20 @@ def fetch(session, row):
             steamItem = SteamItem(id=row[2], name=row[0], price=steamPrice / 100, autobuyPrice=steamAutobuyPrice / 100)
             steamItems.append(steamItem)
             print(steamItem)
-            cur.execute("""UPDATE steaminfo SET PRICE = %s, AUTOBUY_PRICE = %s WHERE name = %s""",
-                        (str(steamItem.price), str(steamItem.autobuyPrice), str(steamItem.name),))
-            conn.commit()
-            # updateData(steamItem)
+            updateData(steamItem)
         except Exception as ex:
-            print(ex)
+            print(ex + ' ' + response.status_code)
 
             return
 
 
-def updateData():
-    for SteamItem in steamItems:
-        try:
-            cur.execute("""UPDATE steaminfo SET PRICE = %s, AUTOBUY_PRICE = %s WHERE steamid = %s""",
-                        (str(SteamItem.price), str(SteamItem.autobuyPrice), str(SteamItem.id),))
-        except Exception as ex:
-            print(ex)
+def updateData(SteamItem):
+    try:
+        cur.execute("""UPDATE steaminfo SET PRICE = %s, AUTOBUY_PRICE = %s WHERE name = %s""",
+                    (str(SteamItem.price), str(SteamItem.autobuyPrice), str(SteamItem.name),))
+        conn.commit()
+    except Exception as ex:
+        print(ex)
 
 
 def bitskinsToSteamAutobuy():
@@ -91,15 +96,18 @@ def bitskinsAutobuyToSteam():
         print(item[0] + ' ' + str(item[1]) + ' ' + str(item[2]) + ' ' + str(100 - item[1] / item[2] * 100))
 
 
-def comparing():
+async def comparing():
+
     with ThreadPoolExecutor(max_workers=50) as executor:
         with requests.Session() as session:
             for row in rows:
+
                 executor.map(fetch, [session], [row])
             executor.shutdown(wait=True)
         print("STEAM UPDATING EXIT")
     bitskinsToSteamAutobuy()
     #bitskinsAutobuyToSteam()
+
 
 
 if __name__ == "__main__":

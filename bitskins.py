@@ -7,25 +7,23 @@ import requests
 
 from Item import BitskinsItem
 from models import conn
+from config import  code, api_key
 
-
-api_key = '2804b7aa-c08b-4c1a-9336-d08d95ed16b3'
 
 socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 9150)
 
 socket.socket = socks.socksocket
-bitskins_link = 'https://bitskins.com/api/v1/get_all_item_prices/?api_key=2804b7aa-c08b-4c1a-9336-d08d95ed16b3&app_id=730&code={code}'
+bitskins_link = 'https://bitskins.com/api/v1/get_all_item_prices/?api_key={api_key}&app_id=730&code={code}'
 cur = conn.cursor()
 
 # Connection to API
-code = pyotp.TOTP("EB4HZJ67O6CDUS35").now()
 updatedBitskinsItems = []
 
-urlForAutobuy='https://bitskins.com/api/v1/summarize_buy_orders/?api_key=2804b7aa-c08b-4c1a-9336-d08d95ed16b3&app_id=730&code={code}'
-bitskinsUrl = 'https://bitskins.com/api/v1/get_price_data_for_items_on_sale/?api_key=2804b7aa-c08b-4c1a-9336-d08d95ed16b3&code={code}&app_id=730'
+urlForAutobuy='https://bitskins.com/api/v1/summarize_buy_orders/?api_key={api_key}&app_id=730&code={code}'
+bitskinsUrl = 'https://bitskins.com/api/v1/get_price_data_for_items_on_sale/?api_key={api_key}&code={code}&app_id=730'
 
-all_items = requests.get(bitskinsUrl.format(code=code)).json()
-allAutobuyItems = requests.post(urlForAutobuy.format(code=code)).json()
+all_items = requests.get(bitskinsUrl.format(code=code, api_key=api_key)).json()
+allAutobuyItems = requests.post(urlForAutobuy.format(code=code, api_key=api_key)).json()
 autobuyItemsPrices = []
 
 #for autobuy
